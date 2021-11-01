@@ -1,6 +1,7 @@
 *.out
 *.exe
 *.idea
+venv
 cmake-build-*
 
 ### Linux ###
