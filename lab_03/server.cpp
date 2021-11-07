@@ -251,10 +251,10 @@ Server::~Server()
     std::cout << "server stopped";
 }
 
-//int main(void)
-//{
-//    int port = 8888;
-//    _Server *serv = new Server(port);
-//    serv->start();
-//    return 0;
-//}
+int main(void)
+{
+    int port = 8888;
+    _Server *serv = new Server(port);
+    serv->start();
+    return 0;
+}

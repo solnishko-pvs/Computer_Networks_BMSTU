@@ -98,58 +98,58 @@ Client::~Client()
 }
 
 
-//int main(void)
-//{
-//    std::cout << "start" << std::endl;
-//    _Client *cli = new Client();
-//    std::string addr = "127.0.0.1";
-//    int port = 8888;
-//    if (cli->connect(addr, port) == -1)
-//    {
-//        std::cout << "connection failed" << std::endl;
-//        return -1;
-//    }
-//    std::string msg;
-//    std::string request;
-//    int status = 0;
-//    while(true)
-//    {
-//        std::cout << "filename: ";
-//        std::cin >> msg;
-//        request = cli->get_request(msg);
-//        if (cli->send_msg(request) < 0)
-//        {
-//            std::cout << "sending failed" << std::endl;
-//            return -1;
-//        }
+int main(void)
+{
+    std::cout << "start" << std::endl;
+    _Client *cli = new Client();
+    std::string addr = "127.0.0.1";
+    int port = 8888;
+    if (cli->connect(addr, port) == -1)
+    {
+        std::cout << "connection failed" << std::endl;
+        return -1;
+    }
+    std::string msg;
+    std::string request;
+    int status = 0;
+    while(true)
+    {
+        std::cout << "filename: ";
+        std::cin >> msg;
+        request = cli->get_request(msg);
+        if (cli->send_msg(request) < 0)
+        {
+            std::cout << "sending failed" << std::endl;
+            return -1;
+        }
 
-//        if ((status = cli->recieve()) < 0)
-//        {
-//            std::cout << "recieving failed" << std::endl;
-//            return -1;
-//        }
+        if ((status = cli->recieve()) < 0)
+        {
+            std::cout << "recieving failed" << std::endl;
+            return -1;
+        }
 
-//        else if (status == 0)
-//        {
-//            std::cout << "server closed connection" << std::endl;
-//            std::cout << "reconnecting..." << std::endl;
-//            if (cli->reconnect(addr, port) == -1)
-//            {
-//                std::cout << "connection failed" << std::endl;
-//                return -1;
-//            }
-//            else if (cli->send_msg(request) < 0)
-//            {
-//                std::cout << "sending failed" << std::endl;
-//                return -1;
-//            }
-//            if ((status = cli->recieve()) < 0)
-//            {
-//                std::cout << "recieving failed" << std::endl;
-//                return -1;
-//            }
-//        }
-//    }
+        else if (status == 0)
+        {
+            std::cout << "server closed connection" << std::endl;
+            std::cout << "reconnecting..." << std::endl;
+            if (cli->reconnect(addr, port) == -1)
+            {
+                std::cout << "connection failed" << std::endl;
+                return -1;
+            }
+            else if (cli->send_msg(request) < 0)
+            {
+                std::cout << "sending failed" << std::endl;
+                return -1;
+            }
+            if ((status = cli->recieve()) < 0)
+            {
+                std::cout << "recieving failed" << std::endl;
+                return -1;
+            }
+        }
+    }
 
-//    return 0;
-//}
+    return 0;
+}
