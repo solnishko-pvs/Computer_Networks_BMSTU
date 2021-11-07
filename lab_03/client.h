@@ -2,25 +2,25 @@
 #define CLIENT_H
 
 #include "_client.h"
-#include <iostream>
-#include <string>
-#include <unistd.h>
-#include <sys/socket.h>
-#include <arpa/inet.h>
-#include <netinet/in.h>
+
 
 class Client:public _Client
 {
 public:
     Client();
-    ~Client() {}
+    ~Client();
 
     int connect(std::string &address, int &port) override;
+    int reconnect(std::string &address, int &port) override;
     int send_msg(std::string &msg) override;
-    int recieve(char &buf) override;
+    int recieve() override;
+    void resize_buf(int &new_size) override;
+    std::string get_request(std::string &filename) override;
 
 private:
     int sock;
+    int buf_size = 256;
+    char* buf;
 };
 
 
