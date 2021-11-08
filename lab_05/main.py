@@ -17,10 +17,14 @@ from email.mime.text import MIMEText
 import time
 from datetime import datetime, timedelta
 import threading
+from os.path import basename
 
-def send_mail(TO, subj, body, FROM = "test.pvs.bmstu@gmail.com", PASSWORD="Tedlg12&", server_host="smtp.gmail.com", port=587, interval=0, times=1):
+def send_mail(TO, subj, body, FROM = "test.pvs.bmstu@gmail.com", PASSWORD="Tedlg12&", server_host="smtp.gmail.com", port=587, interval=0, times=1,
+              files=None):
 
-    msg = fill_msg(TO, FROM, subj, body)
+    if files is None:
+        files = []
+    msg = fill_msg(TO, FROM, subj, body, files)
 
     server = smtplib.SMTP(server_host, port)
     server.starttls()
@@ -33,8 +37,7 @@ def send_mail(TO, subj, body, FROM = "test.pvs.bmstu@gmail.com", PASSWORD="Tedlg
     server.quit()
 
 
-def fill_msg(TO, FROM, subj, body):
-
+def fill_msg(TO, FROM, subj, body, files):
     msg = MIMEMultipart()
     msg['To'] = TO
     msg['From'] = FROM
@@ -45,11 +48,24 @@ def fill_msg(TO, FROM, subj, body):
 
     msg.attach(MIMEText(body))
 
+    for file in files:
+        try:
+            with open(file, "rb") as f:
+                part = MIMEApplication(
+                    f.read(),
+                )
+                f.close()
+            part['Content-Disposition'] = f'attacment; filename="{basename(file)}"'
+
+            msg.attach(part)
+        except FileNotFoundError:
+            print(f"file {file} doesn't exist")
     return msg
 
 
 def main():
     Choice = None
+
     while Choice != '0':
         print("""
                 Выберите режим.
@@ -73,11 +89,14 @@ def main():
                     TO = input("Адрес получателя: ")
                     subj = input("Тема письма: ")
                     body = input("Текст письма: ")
+                    files = list(input("Путь к документам, которые хотите прикрепить (через запятую): ").split(', '))
+                    if files[0] == '' and len(files) == 1:
+                        files = []
                     is_interval = None
                     while is_interval not in ("NO",  "no", 'n', "YES", "yes", 'y'):
                         is_interval = input("Хотите отправлять письмо с интервалом? (yes/no): ")
                         if is_interval in ("NO",  "no", 'n'):
-                            send_mail(TO=TO, subj=subj, body=body)
+                            send_mail(TO=TO, subj=subj, body=body, files=files)
                         elif is_interval in ("YES", "yes", 'y'):
                             interv = int(input("Интервал в секундах: "))
                             interval = timedelta(seconds=interv)
@@ -86,7 +105,8 @@ def main():
                                                                                 'subj': subj,
                                                                                 'body': body,
                                                                                 'interval': interval.total_seconds(),
-                                                                                'times': times})
+                                                                                'times': times,
+                                                                                'files': files})
                             thread.start()
 
                 elif NextChoice != '0':
@@ -107,11 +127,14 @@ def main():
                     TO = input("Адрес получателя: ")
                     subj = input("Тема письма: ")
                     body = input("Текст письма: ")
+                    files = list(input("Путь к документам, которые хотите прикрепить (через запятую): ").split(', '))
+                    if files[0] == '' and len(files) == 1:
+                        files = []
                     is_interval = None
                     while is_interval not in ("NO",  "no", 'n', "YES", "yes", 'y'):
                         is_interval = input("Хотите отправлять письмо с интервалом? (yes/no): ")
                         if is_interval in ("NO",  "no", 'n'):
-                            send_mail(TO=TO, FROM=FROM, PASSWORD=PASSWORD, subj=subj, body=body)
+                            send_mail(TO=TO, FROM=FROM, PASSWORD=PASSWORD, subj=subj, body=body, files=files)
                         elif is_interval in ("YES", "yes", 'y'):
                             interv = int(input("Интервал в секундах: "))
                             interval = timedelta(seconds=interv)
@@ -123,7 +146,8 @@ def main():
                                                               'FROM': FROM,
                                                               'PASSWORD': PASSWORD,
                                                               'interval': interval.total_seconds(),
-                                                              'times': times})
+                                                              'times': times,
+                                                              'files': files})
                             thread.start()
 
                 elif NextChoice != '0':
